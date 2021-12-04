@@ -1,0 +1,58 @@
+﻿@model MealManagementSoftwareDataLayer.UserModel
+@using MealManagementSoftwareDataLayer
+
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@using Microsoft.AspNetCore.Authorization
+@using IdentityModel;
+@inject IAuthorizationService AuthorizationService
+@inject UserManager<ApplicationUser> UserManager
+@{
+    ViewData["Title"] = "Details";
+    var isParent = SignInManager.IsSignedIn(User) &&
+         User.Claims.Any(c => c.Type == JwtClaimTypes.Role && c.Value == "Parent");
+    var isAdmin = SignInManager.IsSignedIn(User) &&
+       User.Claims.Any(c => c.Type == JwtClaimTypes.Role && c.Value == "RoleOfAdmin");
+    var isStudent = SignInManager.IsSignedIn(User) &&
+      User.Claims.Any(c => c.Type == JwtClaimTypes.Role && c.Value == "RoleOfStudent");
+
+    } 
+
+<div style="background: #2b484c; padding: 10px; color: white;">
+    <h4> Profile</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.EmailAddress)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.EmailAddress)
+        </dd>
+        @if (isStudent)
+        {
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.RollNumber)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.RollNumber)
+            </dd> 
+             
+        }
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.IsVerified)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.IsVerified)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="EditUserProfile" asp-route-id="@Model.Id" class="btn btn-primary">update</a> 
+    <a asp-action="Index" class="btn btn-default">Go back</a>
+</div>

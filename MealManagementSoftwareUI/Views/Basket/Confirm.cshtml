@@ -1,0 +1,67 @@
+﻿@model MealManagementSoftwareUiLayer.ViewModel.PaymentCardViewModel
+@using MealManagementSoftwareDataLayer
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims;
+@inject IAuthorizationService AuthorizationService
+@inject UserManager<ApplicationUser> UserManager
+
+@using IdentityModel;
+@{
+    ViewData["Title"] = "Pay now";
+    var userClaimId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.UserData);
+    var userId = userClaimId == null ? 0 : Convert.ToInt32(userClaimId.Value);
+}
+@{
+    ViewData["Title"] = "Details";
+}
+<style>
+    .main-wrapper {
+        padding: 20px;
+    }
+
+    .validation-summary ul {
+        list-style-type: none;
+        color: white;
+        text-align: left;
+        padding: 0;
+    }
+    .help-block {
+        color:red
+    }
+    .inner-div {
+        margin: 0 auto;
+        width: 500px;
+        height: 232px;
+        color: white;
+        background: rgb(2,0,36);
+        padding: 30px;
+        background: #2b484c !important;
+    }
+</style>
+<div class="main-wrapper">
+    <div class="inner-div">
+        <div class="help-block"> @Html.ValidationSummary(false)</div>
+        <form action="/basket/confirm" method="post">
+            <h4>Enter your card details</h4>
+            <div class="form-row">
+
+                <label for="Amount">Amount</label>
+                @Html.TextBoxFor(x => x.Amount, new { @class = "form-control", @type = "number" ,@readonly="true" })
+
+            </div>
+            
+            @Html.HiddenFor(x => x.CardId)
+            @Html.HiddenFor(x => x.UserProfileId)
+
+            <hr />
+            <button type="submit" class="btn btn-primary text-center">Confirm</button>
+            <button onclick="goBack()" class="btn btn-default text-center">Go Back</button>
+
+            <script>function goBack() {
+                    window.history.back();
+                }</script>
+        </form>
+    </div>
+</div> 

@@ -1,0 +1,166 @@
+﻿@model MealManagementSoftwareUiLayer.ViewModel.MealMenuCollectionModel
+@using Microsoft.AspNetCore.Identity
+@using MealManagementSoftwareDataLayer
+
+@inject SignInManager<ApplicationUser> SignInManager
+@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims;
+@inject IAuthorizationService AuthorizationService
+@inject UserManager<ApplicationUser> UserManager
+@{
+    ViewData["Title"] = "Dishes";
+    var userClaimId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.UserData);
+    var userId = userClaimId == null ? 0 : Convert.ToInt32(userClaimId.Value);
+}
+<style>
+    td {
+        vertical-align: middle !important;
+    }
+    tbody {
+        background-color: #0b4b54 !important;
+    }
+</style>
+
+<hr />
+<form class="form-inline">
+    <div class="form-group" >
+        <h1>Select Dishes</h1>
+    </div>
+    <div class="form-group" style="padding-left: 20px;">
+        <label for="staticEmail" class="col-sm-6 col-form-label">Dish type:</label>
+        <div class="col-sm-6">
+            @Html.DropDownListFor(m => m.SelectedMealType, new SelectList(Model.AvailableMealTypes.Items, "Value", "Text"),
+                   "Select Dish", new { @class = "form-control", onchange = @"form.submit();" })
+        </div>
+    </div>
+
+    <div class="form-group" style="padding-left: 20px;">
+        <label for="staticEmail" class="col-sm-6 col-form-label">Available on:</label>
+        <div class="col-sm-6">
+
+            <div class="input-group date" data-provide="datepicker">
+                <input placeholder="filter by date" type="text" name="SelectedAvailableDate" id="SelectedAvailableDate" readonly onchange="form.submit();" class="form-control" autocomplete="off"
+                       value="@(Model.SelectedAvailableDate == default ? string.Empty: Model.SelectedAvailableDate.Value.ToString())">
+                <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-th"></span>
+                </div>
+            </div>
+            <script>$("#datepicker").datepicker("setDate", new Date());
+                $('#datepicker').datepicker({
+                    weekStart: 1,
+                    daysOfWeekHighlighted: "6,0",
+                    autoclose: true,
+                    todayHighlight: true,
+                });</script>
+        </div>
+    </div>
+    <div class="form-group" style="padding-left: 20px;">
+       
+        <div class="col-sm-6">
+            <a id="GetAllRecords" onclick="getAllMeals()" class="btn btn-info" href="#">Get Dishes</a>
+        </div>
+    </div>
+
+
+</form>
+<br />
+<br />
+<div class="alert " style="display:none" id="statusMessage"> </div>
+<div style="overflow-y: scroll; max-height: 500px;" id="style-7" class="scrollbar">
+    <table class="table table-striped table-dark">
+        <thead>
+            <tr>
+
+                <th>
+                    Name
+                </th>
+               
+                <th>
+                    Cost
+                </th>
+                <th>
+                    Available on
+                </th>
+                <th>
+                    Dish type
+                </th>
+                
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.MealMenuModels == null || !Model.MealMenuModels.Any())
+            {
+                <tr class="no-record-found">
+                    <td colspan="6">
+                        <span> No records found</span>
+
+                    </td>
+                </tr>
+            }
+            else
+            {
+                foreach (var item in Model.MealMenuModels)
+                {
+        <tr>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)   @if (string.IsNullOrEmpty(item.ImageName))
+                {
+            <img src="/images/no-image.png" alt="Image name" height="60px" width="60px" style="border-radius: 50%;" /> }
+        else
+        {
+            <img src="/images/@item.ImageName@(".png")" alt="Image name" height="60px" width="60px" style="border-radius: 50%;" />}
+            </td>
+            
+            <td>
+                @if (item.WasPrice != default)
+                {
+        <span style=" text-decoration: line-through;"> £ @item.WasPrice</span>}
+                <span> £@item.Price</span>
+            </td>
+            <td>
+                @item.AvailableDate.Date.ToString("dd/MM/yyyy")
+            </td>
+            <td>
+                @item.MealType
+            </td>
+            
+            <td>
+                <a style="color:white" class="btn btn-info" onclick="addToCart(@(item.Id),@(item.AvailabililtyDateId),@(userId),'@(item.Name)')" href="#">Buy now</a>
+            </td>
+        </tr>
+                }
+            }
+        </tbody>
+    </table>
+    </div>
+
+    <div class="text-center">
+        <a id="CancelBtn" class="btn btn-default" href="/basket/index">Go to Basket</a>
+    </div>
+    <script>function addToCart(menuId, availabilityDateId, userId, menuName) {
+            $.ajax({
+                method: "post",
+                url: "/basket/AddToCart/" + menuId + "/" + availabilityDateId + "/" + userId,
+                success: function (result) {
+                    $('#statusMessage').show();
+                    if (result.status) {
+
+                        $('#statusMessage').addClass("alert-success  w-100");
+                        $('#statusMessage').html("<span>" + menuName + " is added to the basket</span>");
+                    } else {
+                        $('#statusMessage').addClass("alert-danger  w-100");
+                        $('#statusMessage').html("<span>" + menuName + " has already been added to the basket</span>");
+                    }
+                    setTimeout(hideStatusMessage, 2000);
+                }
+            });
+        }
+
+        function getAllMeals() {
+            window.location.href = "/meals/StudentMealList";
+        }
+        function hideStatusMessage() {
+            $('#statusMessage').hide();
+        }</script>

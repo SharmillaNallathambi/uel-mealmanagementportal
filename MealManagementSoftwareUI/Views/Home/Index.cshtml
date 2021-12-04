@@ -1,0 +1,76 @@
+﻿@using MealManagementSoftwareDataLayer
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims;
+@inject IAuthorizationService AuthorizationService
+@inject UserManager<ApplicationUser> UserManager
+@model MealManagementSoftwareUiLayer.ViewModel.HomeModel
+@using IdentityModel;
+@{ ViewData["Title"] = "Home Page";
+    var userClaimId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.UserData);
+    var userId = userClaimId == null ? 0 : Convert.ToInt32(userClaimId.Value); }
+<style>
+    .home-wrapper p {
+        margin-top: 50px;
+        font-size: large !important;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+
+    .home-banner {
+        height: 50px;
+        position: relative;
+    }
+</style>
+<div class="text-center home-wrapper">
+
+
+
+    <!-- Small boxes (Stat box) -->
+    @if (SignInManager.IsSignedIn(User))
+    {
+
+<div>
+
+    <div class="home-banner">
+        <h4 style=" margin-top: 100px; font-size: 20px;">View and Book dishes</h4>
+    </div>
+
+    <div class="home-login-banner">
+        <a class="btn btn-default" href="/meals/studentmeallist" style="width: 200px; background: #2b484c; color: white;">View dishes</a>
+    </div>
+</div> }
+
+else
+{
+<div class="home-banner">
+    <div style="width: 1000px; background: #2b484c; color: white; padding: 20px; height: 400px; ">
+        <div style=" margin-top: 60px;">
+            <div style="text-align:left">
+                <h2> <b>University of east london</b></h2>
+                <h4> Course work by,</h4>
+                <ul style="list-style-type: none">
+                    <li>Sharmila Nallathambi - 2133320</li>
+                    <li>Bathuka Srikanth Yasav - 2130345</li>
+                    <li>Jayanth Budde - 2133867</li>
+                    <li>Dilshad Beegam Shahul Hameed - U2168297</li>
+                </ul>
+            </div>
+        </div>
+        <div style="margin-top:50px">
+            <h4 style="font-size: 30px;"> Please sign in to book your meals</h4>
+            <div class="home-login-banner" style="margin-top:20px">
+                <a class="btn btn-default" href="/login" style="width: 200px; background: #11a2b9; color: white;">Sign In</a>
+            </div>
+        </div>
+    </div>
+</div>}
+
+    @if (SignInManager.IsSignedIn(User) && User.Claims.Any(c => c.Type == JwtClaimTypes.Role && c.Value == "RoleOfStudent"))
+    {
+<h1 class="display-4">Card balance: Rs.@(Model.AvailableBalance)</h1> }
+else if (SignInManager.IsSignedIn(User) && User.Claims.Any(c => c.Type == JwtClaimTypes.Role && c.Value == "RoleOfParents"))
+{
+<h1 class="display-4">Student's Card balance: Rs. @(Model.AvailableBalance)</h1>}
+</div>

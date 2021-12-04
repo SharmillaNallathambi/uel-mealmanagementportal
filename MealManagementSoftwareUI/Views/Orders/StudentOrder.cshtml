@@ -1,0 +1,57 @@
+﻿@model IEnumerable<MealManagementSoftwareDataLayer.DishOrder>
+
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<h1>Your orders</h1>
+<div id="style-7" class="scrollbar">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.OrderReference)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TotalPrice)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CreatedDate)
+                </th>
+                <th>
+                    Is Paid
+                </th>
+                <th>
+                    View detail
+                </th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderReference)
+                    </td>
+                    <td>
+                        £ @Html.DisplayFor(modelItem => item.TotalPrice)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreatedDate.Date)
+                    </td>
+                    <td>
+                        @(item.Payments != null && item.Payments.Any() ?"Yes":"No")
+                    </td>
+                    <td>
+                        <a asp-action="Index" asp-controller="OrderItems" asp-route-id="@item.Id">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+<div class="text-center">
+    <a id="CancelBtn" class="btn btn-default" href="/home">Back to Home</a>
+</div>

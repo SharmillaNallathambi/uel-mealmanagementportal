@@ -1,0 +1,48 @@
+﻿@model IEnumerable<MealManagementSoftwareDataLayer.DishOrderItem>
+
+@{
+    ViewData["Title"] = "Order details";
+}
+<div id="style-7" class="scrollbar">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.MealMenuOrderDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Quantity)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Price)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MealMenu)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MealMenuOrderDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Quantity)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Price)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MealMenu.MealName)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+    <div class="text-center">
+        <a class="btn btn-info" href="javascript:history.back()">Go Back</a>
+    </div>

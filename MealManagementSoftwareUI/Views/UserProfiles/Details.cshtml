@@ -1,0 +1,43 @@
+﻿@model MealManagementSoftwareDataLayer.CustomerProfile
+ 
+
+ 
+<div style="background: #2b484c; color: white; padding: 10px;">
+    <h4>Profile</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+           User name
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+          Email address
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.EmailAddress)
+        </dd>
+        <dt class="col-sm-2">
+          Roll number
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RollNumber)
+        </dd>
+        
+        <dt class="col-sm-2">
+           Has the email address been verified by Admin?
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.IsVerified)
+        </dd>
+        <dt class="col-sm-2">
+            User role
+        </dt>
+        
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Update</a> |
+    <a asp-action="Index">Go Backt</a>
+</div>

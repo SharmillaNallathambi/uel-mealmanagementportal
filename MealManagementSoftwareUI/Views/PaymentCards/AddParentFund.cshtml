@@ -1,0 +1,77 @@
+﻿
+@model MealManagementSoftwareUiLayer.ViewModel.PaymentCardViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+<style>
+    .main-wrapper {
+        padding: 20px;
+    }
+    .help-block {
+
+        color:red;
+    }
+    .validation-summary ul {
+        list-style-type: none;
+        color: white;
+        text-align: left;
+        padding: 0;
+    }
+    .inner-div {
+        margin: 0 auto;
+        width: 500px;
+        height: 500px;
+        color: white;
+        background: rgb(2,0,36);
+        padding: 15px;
+        background: #2b484c;
+    }
+</style>
+<div class="main-wrapper">
+    <div class="inner-div">
+        <div class="help-block"> @Html.ValidationSummary(false)</div>
+        <form action="/paymentcards/AddParentFund" method="post">
+            <h4>Add money</h4>
+            <div class="form-row">
+
+                <label for="Amount">How much moneyyou want to add?</label>
+                @Html.TextBoxFor(x => x.Amount, new { @class = "form-control", @type = "number", @Value = "" })
+
+            </div>
+            <div class="form-row">
+                <label for="CardNumber">Please enter your deb number</label>
+                @Html.TextBoxFor(x => x.BankCardNumber, new { @class = "form-control", @type = "number", @Value = "" })
+
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="ExpiryMonth">Please enter your debit card wxpiry Month</label>
+                    @Html.TextBoxFor(x => x.ExpiryMonth, new { @class = "form-control", @type = "number", @Value = "" })
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="ExpiryYear">Please enter your debit card expiry Year</label>
+                    @Html.TextBoxFor(x => x.ExpiryYear, new { @class = "form-control", @type = "number", @Value = "" })
+                </div>
+            </div>
+            <div class="form-row">
+                <label for="CVV">Please enter your debit card CVV</label>
+                @Html.TextBoxFor(x => x.CVV, new { @class = "form-control", @type = "number", @Value = "" })
+            </div>
+            @Html.HiddenFor(x => x.CardId)
+            @Html.HiddenFor(x => x.UserProfileId)
+
+            <hr />
+            <div class="text-center">
+
+
+                <button type="submit" class="btn btn-primary text-center">Confirm</button> 
+            </div>
+
+            <script>function goBack() {
+                    window.history.back();
+                }</script>
+        </form>
+    </div>
+</div> 

@@ -1,0 +1,58 @@
+﻿@model MealManagementSoftwareDataLayer.PaymentCard
+
+@{
+    ViewData["Title"] = "Details";
+}
+<style>
+    .main-wrapper {
+        padding: 20px;
+    }
+    .help-block {
+        color: green;
+    }
+    .inner-div {
+        margin: 0 auto;
+        width: 500px;
+        height: 350px;
+        color: white;
+        background: rgb(2,0,36);
+        padding: 30px;
+        background: #2b484c;
+    }
+</style>
+<div class="main-wrapper">
+
+    <div class="inner-div">
+        <h1 style="text-align:center;">Card Balance</h1>
+        <hr />
+
+
+        @if (ViewBag.Status != "" && ViewBag.Status != null)
+        {
+            <div class="help-block">@ViewBag.Status</div>
+        }
+        <dl class="row">
+            <dt class="col-sm-6">
+                PAN
+            </dt>
+            <dd class="col-sm-6">
+                @Html.DisplayFor(model => model.CardNumber)
+            </dd>
+
+        </dl>
+        <dl class="row">
+
+            <dt class="col-sm-6">
+                Balance
+            </dt>
+            <dd class="col-sm-6">
+                £@Html.DisplayFor(model => model.AvailableBalance)
+            </dd>
+        </dl>
+        <br /> 
+        <div class="text-center">
+            <a class="btn  btn-primary text-center" href="/AddStudentFund/@Model.Id/@Model.UserProfileId">Add Money</a>
+            <a id="CancelBtn" class="btn btn-default text-center" href="/home">Cancel</a>
+        </div>
+    </div>
+    </div> 

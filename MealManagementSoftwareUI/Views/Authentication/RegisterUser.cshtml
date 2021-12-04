@@ -1,0 +1,116 @@
+﻿@model MealManagementSoftwareUiLayer.ViewModel.RegisterUserViewModel
+
+@{
+    ViewData["Title"] = "Sign up";
+    var postUrl = Model.IsAdmin ? "/register/admin" : "/register";
+}
+<style>
+
+
+    .register-wrapper {
+        padding: 5px;
+    }
+    .help-block {
+        color:red;
+    }
+    .content-wrapper {
+        width: auto;
+        margin-left: 0 !important;
+        min-height: 450px;
+        background-color: white;
+    }
+
+    .inner-div {
+        margin: 0 auto;
+        width: 500px;
+        height: auto;
+        color: white;
+        background: rgb(2,0,36);
+        padding: 30px;
+        background: #2b484c; 
+    }
+</style>
+<div class="register-wrapper">
+    <div class="inner-div">
+        <div class="help-block"> @Html.ValidationSummary(false)</div>
+        <form action="@(postUrl)" method="post" onsubmit="submitForm()">
+            <h4>Sign up</h4>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="Firstname">Firstname</label>
+                    @Html.TextBoxFor(x => x.Firstname, new { @class = "form-control", @type = "text"  , @autocomplete = "off" })
+
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="Lastname">Lastname</label>
+                    @Html.TextBoxFor(x => x.Lastname, new { @class = "form-control", @type = "text", @autocomplete = "off" })
+
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="Email">Email Address</label>
+                    @Html.TextBoxFor(x => x.Email, new { @class = "form-control", @type = "email", @autocomplete = "off" })
+
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="Password">Password</label>
+                    @Html.TextBoxFor(x => x.Password, new { @class = "form-control", @type = "password", @autocomplete = "off" })
+
+                </div>
+            </div>
+
+
+            @if (!Model.IsAdmin)
+            {
+
+                
+                if (!Model.IsParent)
+                {
+                   
+                    <div class="form-group" id="RollnumberDiv" style=@(Model.IsParent? "display:none": "display:block")>
+                        <label for="Rollnumber">Rollnumber</label>
+                        @Html.TextBoxFor(x => x.Rollnumber, new { @class = "form-control", @type = "number", Value = "", @autocomplete = "off" })
+                    </div>
+                }
+                <div class="form-group" id="StudentEmailDiv" style=@(Model.IsParent? "display:block": "display:none")>
+                    <label for="Rollnumber">Student Email</label>
+                    @Html.TextBoxFor(x => x.StudentEmail, new { @class = "form-control", @type = "email", @autocomplete = "off" })
+
+                </div>
+            }
+            @Html.HiddenFor(x => x.IsAdmin)
+            <button type="submit" id="RegisterBtn" class="btn btn-primary">Sign up</button>
+            <a  id="CancelBtn" class="btn btn-default" href="javascript:history.back()">Cancel</a> 
+        </form>
+    </div>
+
+</div>
+
+
+<script>
+    var Rollnumber = document.getElementById("RollnumberDiv");
+    var Department = document.getElementById("DepartmentDiv");
+    var StudentEmail = document.getElementById("StudentEmailDiv");
+    function submitForm() {
+        
+        document.getElementById("RegisterBtn").disabled = true;
+        return true;
+    }
+    function toggle_validator(e) {
+
+        if (document.getElementById('IsParent').checked) {
+            $('#IsParent').val(true);
+            Rollnumber.style.display = "none";
+            Department.style.display = "none";
+            StudentEmailDiv.style.display = "block";
+        }
+        else {
+            $('#IsParent').val(false);
+            Rollnumber.style.display = "block";
+            Department.style.display = "block";
+            StudentEmailDiv.style.display = "none";
+        }
+    }
+</script>
+

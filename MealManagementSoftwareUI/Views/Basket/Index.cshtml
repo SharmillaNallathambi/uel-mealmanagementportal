@@ -1,0 +1,177 @@
+﻿@model IEnumerable<MealManagementSoftwareDataLayer.Basket>
+@using MealManagementSoftwareDataLayer
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<ApplicationUser> SignInManager
+@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims;
+@inject IAuthorizationService AuthorizationService
+@inject UserManager<ApplicationUser> UserManager
+@{
+    ViewData["Title"] = "Basket";
+    var userClaimId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.UserData);
+    var userId = userClaimId == null ? 0 : Convert.ToInt32(userClaimId.Value);
+    var totalPrice = Model?.Sum(c => c.Quantity * c.Price);
+    var availableBalance = Model?.FirstOrDefault()?.UserProfile?.Cards?.FirstOrDefault().AvailableBalance;
+
+}
+<style>
+    td {
+        vertical-align: middle !important;
+    }
+    table thead {
+        color: white;
+        background-color: #2b484c !important;
+    }
+</style>
+<h1>Basket</h1>
+ @if (Model != null && Model.Any())
+{
+    <h3>Total Cost - £@(totalPrice)</h3>
+    @if (availableBalance == 0)
+    {
+        <h6>Note: Card balance is £.0.00. so, you have insufficient balance </h6>
+    }
+}
+<div class="alert " style="display:none" id="statusMessage"> </div>
+<div  id="style-7" class="scrollbar">
+
+    <table class="table">
+        <thead>
+            <tr>
+               
+                <th>
+                   Dish
+                </th>
+                <th>
+                    Item count
+                </th>
+                <th>
+                   Cost
+                </th>
+                <th>
+                    Total Cost
+                </th>
+                <th>
+                    Purchase date
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model == null || !Model.Any())
+            {
+                <tr class="no-record-found">
+                    <td colspan="6">
+                        <span> No record(s) found</span>
+
+                    </td>
+                </tr>
+            }
+            else
+            {
+
+                foreach (var item in Model)
+                {
+                    <tr>
+                         
+                        <td>
+                            @Html.DisplayFor(modelItem => item.MealMenu.MealName)
+                        </td>
+                        <td>
+                            @Html.DropDownListFor(modelItem => item.Quantity, new SelectList(new List<SelectListItem> {
+                           new SelectListItem("1","1"),
+                           new SelectListItem("2","2"),
+                           new SelectListItem("3","3"),
+                           new SelectListItem("4","4")
+                    }, "Text", "Value"), new
+                            {
+                                onchange = @"updateQuantity(this.value" + "," + (item.Id) + ",'" + (item.MealMenu.MealName) + "')"
+                            })
+                        </td>
+                        <td>
+                            £@Html.DisplayFor(modelItem => item.Price)
+                        </td>
+
+                        <td>
+                            £@(item.Price * item.Quantity)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.MealAvailableDate)
+                        </td>
+
+                        <td>
+                            <a onclick="removeFromCart(@(item.Id),'@(item.MealMenu.MealName)')" href="#">Delete</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="text-center">
+        <a class="btn btn-primary" href="/home"> Go back</a>
+    </div>
+}
+else
+{
+    <div class="text-center">
+        @if (availableBalance > 0)
+        {
+        <a type="button" style="background: #11a2b9 !important" class="btn btn-primary" 
+           href="/basket/confirm/@(userId)"> Confirm and Make payment</a>
+        
+        }
+        else
+        {
+    <p>Sorry, your balance is £0. </p>
+    <a type="button" class="btn btn-secondary" href="/home"> Go Back</a>
+        }
+    </div>
+}
+<script>function updateQuantity(selectedQuantity, cartId, menuName) {
+        $.ajax({
+            method: "post",
+            url: "/basket/update/" + cartId + '/' + selectedQuantity,
+            success: function (result) {
+                $('#statusMessage').show();
+                if (result.status) {
+
+                    $('#statusMessage').addClass("alert-success  w-100");
+                    $('#statusMessage').html("<span>" + menuName + " - " + result.message + "</span>");
+                } else {
+                    $('#statusMessage').addClass("alert-danger  w-100");
+                    $('#statusMessage').html("<span>  please try again later</span>");
+                }
+                setTimeout(hideStatusMessage, 2000);
+                location.reload();
+            }
+        });
+    }
+    function removeFromCart(cartId, menuName) {
+        $.ajax({
+            method: "post",
+            url: "/basket/remove/" + cartId,
+            success: function (result) {
+                $('#statusMessage').show();
+                if (result.status) {
+
+                    $('#statusMessage').addClass("alert-success  w-100");
+                    $('#statusMessage').html("<span>" + menuName + " is removed from the basket</span>");
+                    location.reload();
+                } else {
+                    $('#statusMessage').addClass("alert-danger  w-100");
+                    $('#statusMessage').html("<span>System issue. please try again later</span>");
+                }
+                setTimeout(hideStatusMessage, 2000);
+                location.reload();
+            }
+        });
+    }
+
+    function hideStatusMessage() {
+        $('#statusMessage').hide();
+    }</script>

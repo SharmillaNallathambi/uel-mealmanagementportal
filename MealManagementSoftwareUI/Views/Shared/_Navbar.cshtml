@@ -1,0 +1,169 @@
+﻿@using MealManagementSoftwareDataLayer
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@using Microsoft.AspNetCore.Authorization
+@using IdentityModel;
+@inject IAuthorizationService AuthorizationService
+@inject UserManager<ApplicationUser> UserManager
+@using System.Security.Claims;
+@inject IAuthorizationService AuthorizationService
+@inject UserManager<ApplicationUser> UserManager
+@{ var userClaimId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.UserData);
+    var userId = userClaimId == null ? 0 : Convert.ToInt32(userClaimId.Value); }
+<style>
+
+    nav {
+        width: 200px !important;
+        height: 100% !important;
+        box-sizing: border-box !important;
+        background: #2b484c !important;
+        position: fixed !important;
+        top: 0px !important;
+        left: 0px !important;
+        padding: 0px 0px 0px 0px !important;
+        margin-top: 50px !important;
+    }
+
+        nav h1 {
+            float: left !important;
+            margin: 5px 0px !important;
+            color: white;
+            font-family: 'Meddon', cursive !important;
+        }
+
+        nav ul {
+            height: 70px !important;
+            float: right !important;
+        }
+
+            nav ul li {
+                width: 200px !important;
+                height: 70px !important;
+                float: left !important;
+                display: block !important;
+            }
+
+                nav ul li a:hover {
+                    text-decoration: none;
+                }
+
+                nav ul li a:active {
+                    text-decoration: none;
+                }
+
+                nav ul li a:focus {
+                    text-decoration: none;
+                }
+
+    .nav-item {
+        background: #11a2b9;
+        border-radius: 40px;
+        height: 50px !important;
+        width: 170px !important;
+        margin-top: 20px !important;
+        text-align: center !important;
+    }
+</style>
+<!-- Navbar -->
+<nav class="main-header navbar navbar-expand navbar-white navbar-light" style="padding-top: 20px !important; margin-top: 0px !important;">
+    @if (SignInManager.IsSignedIn(User))
+    {<ul>
+
+
+            <li>
+                <a asp-controller="Home" asp-action="Index"
+                   title="Welcome" style=" color: white; font-size: 16px;">Dear @User.Identity.Name!</a>
+            </li>
+        </ul>}
+
+    <!-- Left navbar links -->
+    <ul class="navbar-nav" style=" display: grid;">
+        <li class="nav-item">
+            <a href="/" class="nav-link">Dashboard</a>
+        </li>
+        @if (SignInManager.IsSignedIn(User) && User.Claims.Any(c => c.Type == JwtClaimTypes.Role && c.Value == "RoleOfStudent"))
+        {
+<li class="nav-item">
+    <a href="/meals/studentMeallist" class="nav-link">Dishes</a>
+</li>
+                <li class="nav-item">
+                    <a href="/orders/studentorder/@(userId)" class="nav-link">Orders</a>
+                </li>
+                                <li class="nav-item">
+                                    <a href="/paymentcards/student/@(userId)" class="nav-link">Card Balance</a>
+                                </li><li class="nav-item">
+    <a href="/basket/Index?userProfileId=@(userId)" class="nav-link">
+        Basket
+    </a>
+</li>
+                                                <li class="nav-item">
+                                                    <a href="/ShowUserProfile/@(userId)" class="nav-link">Profile</a>
+                                                </li>
+}
+        @if (SignInManager.IsSignedIn(User) && User.Claims.Any(c => c.Type == JwtClaimTypes.Role && c.Value == "RoleOfParent"))
+        {
+<li class="nav-item">
+    <a href="/ShowUserProfile/@(userId)" class="nav-link">Profile></a>
+</li>
+                <li class="nav-item">
+                    <a href="/basket/parent/@(userId)" class="nav-link">Check student balance</a>
+                </li>}
+        @if (SignInManager.IsSignedIn(User) && User.Claims.Any(c => c.Type == JwtClaimTypes.Role && c.Value == "RoleOfAdmin"))
+        {
+<li class="nav-item">
+    <a href="/orders" class="nav-link">Orders<i class="fas fa-arrow-circle-right"></i></a>
+</li>
+               
+                                <li class="nav-item">
+                                    <a href="/userprofiles" class="nav-link">Users</a>
+                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/meals" class="nav-link">Dishes</a>
+                                                </li>
+                                                                
+
+
+                                                                                <li class="nav-item">
+                                                                                    <a href="/mealvariety" class="nav-link">
+
+                                                                                        <p>
+                                                                                            Meal Types
+                                                                                        </p>
+                                                                                    </a>
+                                                                                </li>
+
+                                                                                                <li class="nav-item">
+                                                                                                    <a href="/offers" class="nav-link">
+
+                                                                                                        <p>
+                                                                                                            Discounts
+                                                                                                        </p>
+                                                                                                    </a>
+                                                                                                </li>
+                                                                                                                <li class="nav-item">
+                                                                                                                    <a href="/availablemeallist" class="nav-link">
+
+                                                                                                                        <p>
+                                                                                                                            Meal Availabilities
+                                                                                                                        </p>
+                                                                                                                    </a>
+                                                                                                                </li>
+}
+        @if (SignInManager.IsSignedIn(User))
+        {
+<li class="nav-item">
+    <form id="logOutForm" asp-controller="Authentication" asp-action="Logout">
+        <a class="nav-link" href="#" onclick="document.getElementById('logOutForm').submit();">Sign out</a>
+    </form>
+</li>}
+        @if (!SignInManager.IsSignedIn(User))
+        {
+<li class="nav-item">
+    <a class="nav-link" asp-controller="Authentication"
+       asp-action="RegisterUser">Sign Up</a>
+</li>}
+
+    </ul>
+
+</nav>
+<!-- /.navbar -->

@@ -1,0 +1,58 @@
+﻿@model IEnumerable<MealManagementSoftwareDataLayer.UserModel>
+
+@{
+    ViewData["Title"] = "User profile";
+}
+<div style="background: #2b484c; color: white; padding: 10px;">
+
+    <h4>User list</h4><div id="style-7" class="scrollbar">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        User name
+                    </th>
+                    <th>
+                        Email address
+                    </th>
+                    <th>
+                        Roll number
+                    </th>
+                    <th>
+                        User role
+                    </th>
+
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EmailAddress)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RollNumber)
+        </td>
+
+        <td>
+            @Html.DisplayFor(modelItem => item.Role)
+        </td>
+        <td>
+            <a asp-action="Edit" asp-route-id="@item.Id">update</a> |
+            <a asp-action="Details" asp-route-id="@item.Id">Show full details</a> |
+            <a asp-action="Delete" asp-route-id="@item.Id">remove</a>
+        </td>
+    </tr>
+   }
+            </tbody>
+        </table>
+    </div>
+    <div class="text-center">
+        <a class="btn btn-default" href="/home">Cancel</a>
+    </div>
+</div>
